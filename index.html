@@ -1,972 +1,296 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
-
-export default function QuizApp() {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answered, setAnswered] = useState({});
-  const [showResults, setShowResults] = useState(false);
-  const [expandedWeek, setExpandedWeek] = useState(null);
-
-  const quizzes = [
-    {
-      week: 1,
-      questions: [
-        {
-          id: 1,
-          text: 'ข้อใดอธิบายความหมายของ Deep Learning ได้ถูกต้องที่สุด',
-          options: [
-            'อัลกอริทึมที่ใช้กฎ (Rule-based) ในการตัดสินใจ',
-            'การเรียนรู้ของเครื่องที่ใช้ Neural Network หลายชั้นเพื่อเรียนรู้คุณลักษณะของข้อมูล',
-            'การประมวลผลข้อมูลด้วยสถิติพื้นฐาน',
-            'การเขียนโปรแกรมแบบกำหนดเงื่อนไขล่วงหน้า'
-          ],
-          correct: 1
-        },
-        {
-          id: 2,
-          text: 'องค์ประกอบใด ไม่ใช่ ส่วนหลักของการฝึก Deep Learning Model',
-          options: [
-            'Input Data',
-            'Operating System',
-            'Loss Function',
-            'Optimizer'
-          ],
-          correct: 1
-        },
-        {
-          id: 3,
-          text: 'ข้อใดอธิบายความหมายของ Scalar ได้ถูกต้องที่สุด',
-          options: [
-            'ข้อมูลหลายค่าเรียงเป็นแถว',
-            'ข้อมูลที่มีทั้งขนาดและทิศทาง',
-            'ค่าตัวเลขเพียงค่าเดียว ไม่มีมิติ',
-            'ข้อมูลสองมิติแบบตาราง'
-          ],
-          correct: 2
-        },
-        {
-          id: 4,
-          text: 'โครงสร้างข้อมูลใดจัดเป็น Vector',
-          options: [
-            'ค่า loss = 0.25',
-            'ภาพขาวดำขนาด 28x28',
-            '(0.2, 0.5, 0.8)',
-            'Batch ของภาพสี'
-          ],
-          correct: 2
-        },
-        {
-          id: 5,
-          text: 'Matrix มีลักษณะเด่นอย่างไร',
-          options: [
-            'มี 2 มิติ (แถว x คอลัมน์)',
-            'มีเพียงค่าเดียว',
-            'มี 1 มิติ',
-            'มีมากกว่า 3 มิติ'
-          ],
-          correct: 0
-        },
-        {
-          id: 6,
-          text: 'ข้อใดเรียงลำดับ มิติ (Rank) ได้ถูกต้องจากน้อยไปมาก',
-          options: [
-            'Vector → Scalar → Matrix + Tensor',
-            'Scalar → Vector → Matrix → Tensor',
-            'Matrix → Vector → Scalar → Tensor',
-            'Tensor → Matrix + Vector → Scalar'
-          ],
-          correct: 1
-        },
-        {
-          id: 7,
-          text: 'ข้อใดเป็นข้อดีหลักของการใช้ Google Colab',
-          options: [
-            'ต้องติดตั้ง TensorFlow เองทุกครั้ง',
-            'รองรับเฉพาะ CPU เท่านั้น',
-            'สามารถใช้งาน GPU/TPU ได้โดยไม่ต้องตั้งค่าเครื่องเอง',
-            'ใช้งานได้เฉพาะบน Linux'
-          ],
-          correct: 2
-        },
-        {
-          id: 8,
-          text: 'TensorFlow มีบทบาทหลักในระบบ Deep Learning อย่างไร',
-          options: [
-            'เป็นเครื่องมือสร้าง Dataset',
-            'เป็น Framework สำหรับคำนวณและฝึกโมเดลเชิงตัวเลข (Numerical Computation)',
-            'เป็นภาษาโปรแกรม',
-            'เป็นระบบจัดการไฟล์'
-          ],
-          correct: 1
-        },
-        {
-          id: 9,
-          text: 'Keras คืออะไรในบริบทของ TensorFlow',
-          options: [
-            'Library สำหรับสร้างกราฟ',
-            'High-level API สำหรับสร้างและฝึก Neural Network',
-            'ระบบจัดการ GPU',
-            'เครื่องมือแปลงข้อมูลเป็น CSV'
-          ],
-          correct: 1
-        },
-        {
-          id: 10,
-          text: 'คำสั่งใดใช้สำหรับสร้างโมเดลแบบ Sequential ใน Keras',
-          options: [
-            'tf.keras.Sequential()',
-            'tf.keras.build()',
-            'tf.keras.layers()',
-            'tf.keras.Model.compile()'
-          ],
-          correct: 0
-        },
-        {
-          id: 11,
-          text: 'ข้อใดต่อไปนี้ถูกต้อง',
-          options: [
-            'Keras เปรียบเสมือน หน้าบ้าน, TensorFlow เปรียบเสมือน หลังบ้าน',
-            'Keras เปรียบเสมือน หลังบ้าน, TensorFlow เปรียบเสมือน หน้าบ้าน'
-          ],
-          correct: 0
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz from P'Fern - Deep Learning & NLP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { scrolling-behavior: smooth; }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-      ]
-    },
-    {
-      week: 2,
-      questions: [
-        {
-          id: 1,
-          text: 'เหตุใดใน Binary Classification จึงใช้ sigmoid ใน output layer',
-          options: [
-            'เพราะ sigmoid ให้ค่ามากกว่า 1',
-            'เพราะ sigmoid เหมาะกับข้อมูลภาพ',
-            'เพราะ sigmoid แปลงค่าเป็นความน่าจะเป็นระหว่าง 0-1',
-            'เพราะ sigmoid ลด overfitting ได้ดีที่สุด'
-          ],
-          correct: 2
-        },
-        {
-          id: 2,
-          text: 'เหตุใด Multi-class Classification จึงใช้ softmax ใน output layer',
-          options: [
-            'เพื่อให้ค่า output เป็น 0 หรือ 1 เท่านั้น',
-            'เพื่อให้แต่ละคลาสเป็นอิสระต่อกัน',
-            'เพื่อให้โมเดลเรียนรู้เร็วขึ้นเสมอ',
-            'เพื่อให้ผลรวมของความน่าจะเป็นทุกคลาสเท่ากับ 1'
-          ],
-          correct: 3
-        },
-        {
-          id: 3,
-          text: 'เหตุใด Regression Model จึงไม่ใช้ activation function ใน output layer',
-          options: [
-            'เพราะ MSE ใช้ได้เฉพาะกับ linear layer',
-            'เพราะ activation function ทำให้โมเดลช้า',
-            'เพราะ regression ต้องการต่ำความน่าจะเป็น',
-            'เพราะต้องการค่าต่อเนื่องที่ไม่ถูกจำกัดช่วง'
-          ],
-          correct: 3
-        },
-        {
-          id: 4,
-          text: 'หากใช้ sigmoid ใน output layer ของ Regression จะเกิดผลใดมากที่สุด',
-          options: [
-            'ค่า prediction จะถูกจำกัดอยู่ระหว่าง 0-1',
-            'ค่า loss จะเป็นศูนย์',
-            'โมเดลจะ overfit ทันที',
-            'R2 score จะเท่ากับ 1'
-          ],
-          correct: 0
-        },
-        {
-          id: 5,
-          text: 'บทบาทหลักของ ReLU ใน hidden layer คือมือใด',
-          options: [
-            'เพิ่ม non-linearity ให้โมเดล',
-            'ทำให้ output เป็น probability',
-            'ทำให้ข้อมูลมีค่าเฉลี่ยเป็นศูนย์',
-            'ลดจำนวนพารามิเตอร์ของโมเดล'
-          ],
-          correct: 0
-        },
-        {
-          id: 6,
-          text: 'บทบาทหลักของ Conv2D layer คือข้อใด',
-          options: [
-            'ลดขนาดภาพ',
-            'แปลงภาพเป็นเวกเตอร์ 1 มิติ',
-            'เพิ่มจำนวน channel โดยตรง',
-            'ดึงคุณลักษณะเชิงพื้นที่ (spatial features)'
-          ],
-          correct: 3
-        },
-        {
-          id: 7,
-          text: 'หน้าที่หลักของ MaxPooling2D คือข้อใด',
-          options: [
-            'เพิ่มจำนวนพารามิเตอร์',
-            'ทำหน้าที่เป็น activation function',
-            'รวม feature map หลายอันเข้าด้วยกัน',
-            'ลดขนาด spatial และลด noise'
-          ],
-          correct: 3
-        },
-        {
-          id: 8,
-          text: 'หน้าที่ของ Flatten ในโมเดล CNN คือข้อใด',
-          options: [
-            'ลดจำนวน channel ของ feature map',
-            'แปลง feature map หลายมิติเป็นเวกเตอร์ 1 มิติ',
-            'เพิ่ม spatial resolution ของภาพ',
-            'ทำหน้าที่เป็น activation function'
-          ],
-          correct: 1
-        }
-      ]
-    },
-    {
-      week: 3,
-      questions: [
-        {
-          id: 1,
-          text: 'จุดประสงค์หลักของ Transfer Learning คืออะไร',
-          options: [
-            'ลดจำนวน layer',
-            'ใช้โมเดลที่เรียนรู้มาก่อนมาช่วยงานใหม่',
-            'ทำให้โมเดลเล็กลง',
-            'เพิ่มจำนวนข้อมูล'
-          ],
-          correct: 1
-        },
-        {
-          id: 2,
-          text: 'โมเดล pretrained ส่วนใหญ่มักเทรนจาก dataset ใด',
-          options: [
-            'CIFAR-10',
-            'MNIST',
-            'ImageNet',
-            'COCO'
-          ],
-          correct: 2
-        },
-        {
-          id: 3,
-          text: 'ใน CNN ขั้นต้น ๆ มักเรียนรู้อะไร',
-          options: [
-            'Object class',
-            'Semantic meaning',
-            'Edge และ texture',
-            'Bounding box'
-          ],
-          correct: 2
-        },
-        {
-          id: 4,
-          text: 'การตั้งค่า include_top=False หมายถึง',
-          options: [
-            'ใช้ layer ทั้งหมด',
-            'ไม่ใช้ classifier เดิม',
-            'ลด input size',
-            'ลบ convolution layer'
-          ],
-          correct: 1
-        },
-        {
-          id: 5,
-          text: 'เหตุผลที่ต้อง Freeze base model ในช่วงแรกคือ',
-          options: [
-            'เร็วขึ้น',
-            'ป้องกันการเปลี่ยน feature ทั่วไป',
-            'ลดจำนวน neuron',
-            'เพื่อใช้ sigmoid'
-          ],
-          correct: 1
-        },
-        {
-          id: 6,
-          text: 'ข้อใดคือ Feature Extraction',
-          options: [
-            'เทรนทุก layer',
-            'Unfreeze layer ทั้งหมด',
-            'Freeze base model แล้วเทรน head',
-            'เปลี่ยน optimizer'
-          ],
-          correct: 2
-        },
-        {
-          id: 7,
-          text: 'Fine-Tuning หมายถึง',
-          options: [
-            'เทรนเฉพาะ Dense',
-            'เทรนบาง layer ของ base model',
-            'ใช้ dataset เล็ก',
-            'เพิ่ม batch size'
-          ],
-          correct: 1
-        },
-        {
-          id: 8,
-          text: 'จุดประสงค์ของ GlobalAveragePooling2D คืออะไร',
-          options: [
-            'เพิ่มจำนวน feature',
-            'แปลง feature map เป็น vector',
-            'เพิ่ม resolution',
-            'ลด learning rate'
-          ],
-          correct: 1
-        },
-        {
-          id: 9,
-          text: 'ข้อใดช่วยลด overfitting ใน head',
-          options: [
-            'เพิ่ม learning rate',
-            'เพิ่ม Dropout',
-            'ลด epoch เป็น 1',
-            'เพิ่ม batch size'
-          ],
-          correct: 1
-        },
-        {
-          id: 10,
-          text: 'สถานการณ์ใดเหมาะกับ Feature Extraction มากที่สุด',
-          options: [
-            'Dataset 1 ล้านภาพ',
-            'Dataset เล็ก และคล้าย ImageNet',
-            'Dataset ใหญ่มาก',
-            'ต้องการเทรนจากศูนย์'
-          ],
-          correct: 1
-        },
-        {
-          id: 11,
-          text: 'Negative Transfer คืออะไร',
-          options: [
-            'การเทรนช้า',
-            'การใช้ pretrained model แล้ว performance แย่ลง',
-            'การ overfitting',
-            'การใช้ GPU ไม่พอ'
-          ],
-          correct: 1
-        },
-        {
-          id: 12,
-          text: 'สาเหตุหลักของ Negative Transfer คือ',
-          options: [
-            'Batch size เล็ก',
-            'Learning rate สูง',
-            'ความแตกต่างของ domain ระหว่าง source กับ target',
-            'ใช้ optimizer ผิด'
-          ],
-          correct: 2
-        },
-        {
-          id: 13,
-          text: 'หากตั้ง base_model.trainable = False หมายถึงอะไร',
-          options: [
-            'โมเดลหยุดทำงาน',
-            'Layer ใน base model จะไม่ถูกอัปเดตระหว่าง training',
-            'Dense layer จะไม่เรียนรู้',
-            'ใช้ GPU ไม่ได้'
-          ],
-          correct: 1
-        },
-        {
-          id: 14,
-          text: 'การทำ Data Augmentation ควรทำในขั้นตอนไหน',
-          options: [
-            'ก่อนเข้า CNN',
-            'หลัง classifier',
-            'หลัง pooling',
-            'หลัง softmax'
-          ],
-          correct: 0
-        },
-        {
-          id: 15,
-          text: 'Fine-Tuning ต่างจาก Feature Extraction อย่างไร',
-          options: [
-            'ใช้ optimizer ต่างกัน',
-            'Feature Extraction ใช้ batch ใหญ่กว่า',
-            'Fine-Tuning ไม่ใช้ pretrained model',
-            'Fine-Tuning อัปเดตบาง layer ของ base model'
-          ],
-          correct: 3
-        }
-      ]
-    },
-    {
-      week: 4,
-      questions: [
-        {
-          id: 1,
-          text: 'กระบวนการแบ่งข้อความออกเป็นหน่วยย่อยๆ เช่น คำ หรือ ตัวอักษร เรียกว่า',
-          options: [
-            'Padding',
-            'Tokenization',
-            'Stopword Removal',
-            'Embedding'
-          ],
-          correct: 1
-        },
-        {
-          id: 2,
-          text: 'คำว่า "a", "an", "this" จะถูกจัดอยู่ในกลุ่มใดในการทำ NLP',
-          options: [
-            'Keywords',
-            'Tokens',
-            'Stopwords',
-            'N-grams'
-          ],
-          correct: 2
-        },
-        {
-          id: 3,
-          text: 'พี่คนสอนชื่ออะไร',
-          options: [
-            'เฟรนด์',
-            'เฟิร์ส',
-            'เฟิร์น',
-            'ฟิวส์'
-          ],
-          correct: 2
-        },
-        {
-          id: 4,
-          text: 'การกำหนด "truncating" และ "padding" มีความสำคัญที่สุดในขั้นตอนใดของ Process',
-          options: [
-            'Tuning Model',
-            'Model Training',
-            'Data Analysis',
-            'Data Preprocessing'
-          ],
-          correct: 3
-        },
-        {
-          id: 5,
-          text: 'เหตุใดเราจึงต้องทำ Padding กับข้อมูลข้อความก่อนส่งเข้าสู่โมเดล Deep Learning',
-          options: [
-            'เพื่อลบคำที่ไม่มีความหมายออก',
-            'เพื่อให้ข้อมูลทุก Input มีขนาดความยาว (Length) เท่ากัน',
-            'เพื่อเพิ่มความแม่นยำของโมเดล',
-            'เพื่อลดขนาดของเวกเตอร์'
-          ],
-          correct: 1
-        },
-        {
-          id: 6,
-          text: 'หากกำหนด maxlen=5 และ truncating=\'post\' ประโยคที่มี Token เป็น [1, 2, 3, 4, 5, 6, 7] จะถูกจัดการอย่างไร',
-          options: [
-            '[1, 2, 3, 4, 5, 0, 0]',
-            '[1, 2, 3, 4, 5]',
-            '[1, 2, 3]',
-            '[3, 4, 5, 6, 7]'
-          ],
-          correct: 1
-        },
-        {
-          id: 7,
-          text: 'ถ้ากำหนด maxlen=4, padding=\'pre\', และประโยคเดิมคือ [10, 11] ผลลัพธ์ที่ได้จะเป็นข้อใด? (สมมติให้ <pad> = 0)',
-          options: [
-            '[10, 11, 0, 0]',
-            '[0, 0, 10, 11]',
-            '[10, 11]',
-            '[0, 10, 11, 0]'
-          ],
-          correct: 1
-        },
-        {
-          id: 8,
-          text: 'กำหนด Vocabulary: {\'<pad>\': 0, \'I\': 1, \'love\': 2, \'NLP\': 3} หากต้องการแปลงประโยค \'I love NLP\' เป็นตัวเลข จะได้ผลลัพธ์ข้อใด?',
-          options: [
-            '[1, 2, 3]',
-            '[0, 1, 2]',
-            '[3, 2, 1]',
-            '[2, 1, 3]'
-          ],
-          correct: 0
-        },
-        {
-          id: 9,
-          text: 'ในการสร้างโมเดล NLP ข้อมูล 3D Tensor มักแสดงผลในรูปแบบใด?',
-          options: [
-            '[Width, Height, Color]',
-            '[Row, Column]',
-            '[Batch, Sequence_length, Embedded_Size]',
-            '[Total_Words]'
-          ],
-          correct: 2
-        },
-        {
-          id: 10,
-          text: 'ปัญหา \'Vanishing Gradient\' ใน RNN แบบตั้งเดิมส่งผลเสียอย่างไร?',
-          options: [
-            'ทำให้โมเดลจำลำดับข้อมูลที่อยู่ไกลกันมากๆ ไม่ได้ (Long-term dependency)',
-            'ทำให้โมเดลทำงานเร็วเกินไป',
-            'ทำให้โมเดลทำ Tokenization ผิดพลาด',
-            'ทำให้โมเดลใช้หน่วยความจำมากเกินไป'
-          ],
-          correct: 0
-        },
-        {
-          id: 11,
-          text: 'LSTM แตกต่างจาก RNN ทั่วไปอย่างไรในเชิงโครงสร้าง',
-          options: [
-            'LSTM ไม่มี hidden state',
-            'LSTM ใช้เฉพาะกับข้อมูลรูปภาพเท่านั้น',
-            'LSTM ไม่สามารถทำ Backpropagation ได้',
-            'LSTM มี Gates เพื่อควบคุมการไหลของข้อมูล'
-          ],
-          correct: 3
-        },
-        {
-          id: 12,
-          text: 'งานประเภท Sentiment Analysis วิเคราะห์อารมณ์จากข้อความ จัดอยู่ในหัวข้อใด?',
-          options: [
-            'Machine Translation',
-            'Text Classification',
-            'Object Detection',
-            'Speech Recognition'
-          ],
-          correct: 1
-        },
-        {
-          id: 13,
-          text: 'ในกรณีที่ต้องการให้โมเดลเข้าใจความหมายของคำจากทั้ง "คำก่อนหน้า" และ "คำที่ตามมา" สถาปัตยกรรมใดเหมาะสมที่สุด?',
-          options: [
-            'Simple RNN',
-            'GRU',
-            'Bidirectional LSTM',
-            'ไม่มีข้อใดถูก'
-          ],
-          correct: 2
-        },
-        {
-          id: 14,
-          text: 'ในระบบแปลภาษาแบบ Encoder-Decoder หน้าที่ของ "Encoder" เปรียบได้กับข้อใดมากที่สุด?',
-          options: [
-            'คนที่ทำหน้าที่เขียนคำแปลลงในกระดาษ',
-            'คนที่อ่านประโยคต้นฉบับแล้วสรุปใจความสำคัญไว้ในหัว',
-            'คนที่ทำหน้าที่ตรวจค่าผิด (Spell Check)',
-            'คนที่ทำหน้าที่จัดหน้ากระดาษให้สวยงาม'
-          ],
-          correct: 1
-        },
-        {
-          id: 15,
-          text: 'ประโยชน์ของการใช้ "Stacked LSTM" (การวาง LSTM ชั้นกันหลายเลเยอร์) คืออะไร?',
-          options: [
-            'เพื่อให้โมเดลทำงานได้เร็วขึ้นและใช้หน่วยความจำน้อยลง',
-            'เพื่อช่วยให้โมเดลสามารถเรียนรู้รูปแบบ (Patterns) ที่ซับซ้อนและเป็นระดับชั้น (Hierarchical) ได้มากขึ้น',
-            'เพื่อลดจำนวนพารามิเตอร์ในโมเดล',
-            'เพื่อเปลี่ยนข้อมูลจาก 3D Tensor ให้เป็น 1D Tensor'
-          ],
-          correct: 1
-        }
-      ]
-    },
-    {
-      week: 5,
-      questions: [
-        {
-          id: 1,
-          text: 'กลไก Self-Attention ทำหน้าที่อะไร?',
-          options: [
-            'สลับตำแหน่งคำในประโยค',
-            'คำนวณความสัมพันธ์ระหว่างคำในประโยคเดียวกัน',
-            'ย่อประโยคยาวให้เหลือสั้นลง',
-            'แปลงตัวอักษรให้เป็นตัวเลข'
-          ],
-          correct: 1
-        },
-        {
-          id: 2,
-          text: 'ทำไม Transformer ต้องมี Positional Encoding?',
-          options: [
-            'เพื่อให้โมเดลรู้ลำดับก่อนหลังของคำ',
-            'เพื่อเพิ่มความเร็วในการเทรน',
-            'เพื่อลดจำนวนคำศัพท์ในระบบ',
-            'เพื่อใช้ในการแยกแยะภาษา'
-          ],
-          correct: 0
-        },
-        {
-          id: 3,
-          text: 'โมเดลตระกูล GPT ใช้โครงสร้างแบบใด?',
-          options: [
-            'Encoder-only',
-            'Decoder-only',
-            'Encoder-Decoder',
-            'RNN-based'
-          ],
-          correct: 1
-        },
-        {
-          id: 4,
-          text: 'Tokenization คือกระบวนการอะไร?',
-          options: [
-            'การแปลภาษาอัตโนมัติ',
-            'การแยกข้อความย่อยและแปลงเป็นตัวเลข',
-            'การเพิ่มรหัสแบบ Public Key',
-            'การลบคำออกจากประโยค'
-          ],
-          correct: 1
-        },
-        {
-          id: 5,
-          text: 'โมเดล BERT เหมาะกับงานลักษณะใด?',
-          options: [
-            'การเขียนนิยายหรือบทความ',
-            'การวิเคราะห์อารมณ์หรือจำแนกข้อความ',
-            'การสร้างแชทบอทถามตอบ',
-            'การพยากรณ์ราคาหุ้น'
-          ],
-          correct: 1
-        },
-        {
-          id: 6,
-          text: 'คำว่า Pre-trained ใน LLM หมายถึงอะไร',
-          options: [
-            'โมเดลที่เพิ่งเริ่มสร้างใหม่',
-            'โมเดลที่ฝึกฝนกับข้อมูลขนาดใหญ่มาแล้ว',
-            'โมเดลที่ใช้งานกับงานสเกลใหญ่',
-            'โมเดลที่ทำงานได้โดยไม่ต้องใช้ GPU'
-          ],
-          correct: 1
-        },
-        {
-          id: 7,
-          text: 'โครงสร้าง Encoder-Decoder นิยมใช้ในงานใด?',
-          options: [
-            'การจำแนกรูปภาพ',
-            'การแปลภาษา',
-            'การกรองอีเมลขยะ',
-            'การเก็บข้อมูลในฐานข้อมูล'
-          ],
-          correct: 1
-        },
-        {
-          id: 8,
-          text: 'ค่า Query (Q) ใน Attention เปรียบได้กับอะไร',
-          options: [
-            'ค่ำคืนหาที่ป้อนเข้าไป',
-            'หัวข้อข้อมูลที่มีอยู่',
-            'เนื้อหาที่ได้รับกลับมา',
-            'ลำดับหน้าของหนังสือ'
-          ],
-          correct: 0
-        },
-        {
-          id: 9,
-          text: 'Hugging Face Library มีประโยชน์อย่างไร?',
-          options: [
-            'ใช้แต่งรูปภาพด้วย AI',
-            'ช่วยให้ดึงโมเดล AI มาใช้ง่ายขึ้น',
-            'ใช้ในการทำ Backend',
-            'ใช้ในการส่งอีเมล'
-          ],
-          correct: 1
-        },
-        {
-          id: 10,
-          text: 'เลเยอร์ Feed-Forward ใน Transformer ทำหน้าที่อะไร?',
-          options: [
-            'จัดลำดับค่าให้ถูกต้อง',
-            'ประมวลผลข้อมูลต่อจาก Attention',
-            'เข้ารหัสข้อมูล',
-            'คอนโวลชันข้อมูล'
-          ],
-          correct: 1
-        },
-        {
-          id: 11,
-          text: 'Multi-Head Attention มีข้อดีอย่างไร?',
-          options: [
-            'ช่วยให้โมเดลทำงานได้หลาย User',
-            'ช่วยมองบริบทของข้อมูลได้หลายแง่มุมพร้อมกัน',
-            'ช่วยให้แปลได้หลายภาษาพร้อมกัน',
-            'ช่วยประหยัด memory'
-          ],
-          correct: 1
-        },
-        {
-          id: 12,
-          text: 'Masking ใน Decoder มีไว้เพื่ออะไร?',
-          options: [
-            'ป้องกันโมเดลมองเห็นคำในอนาคต',
-            'ทำให้ภาพใน AI ประมวลผลเร็วขึ้น',
-            'ทำให้โมเดลมีพารามิเตอร์มากขึ้น',
-            'เพื่อป้องกันการเจาะชั้นเครือข่ายโมเดล'
-          ],
-          correct: 0
-        },
-        {
-          id: 13,
-          text: 'LLM มีพารามิเตอร์อยู่ใน Range ประมาณเท่าไร',
-          options: [
-            '1M-175B',
-            '500K-50M',
-            '10M-1000M',
-            '2M-200M'
-          ],
-          correct: 0
-        },
-        {
-          id: 14,
-          text: 'Beam Search Algorithm ใช้หลักการเลือกประโยคสุดท้ายจากอะไร?',
-          options: [
-            'ประโยคที่มีค่าความน่าจะเป็นสะสมสูงสุด',
-            'ความถี่ของคำในประโยค',
-            'ประโยคที่ถูก generate ก่อน',
-            'ประโยคที่มี token ซ้ำกันน้อยที่สุด'
-          ],
-          correct: 0
-        },
-        {
-          id: 15,
-          text: 'ข้อใดคือชื่อโมเดลภาษาจาก Google?',
-          options: [
-            'GPT-4',
-            'Llama',
-            'Claude',
-            'Gemini'
-          ],
-          correct: 3
-        }
-      ]
-    }
-  ];
-
-  const allQuestions = quizzes.flatMap(q => q.questions);
-
-  const handleAnswer = (questionId, optionIndex) => {
-    setAnswered(prev => ({
-      ...prev,
-      [questionId]: optionIndex
-    }));
-  };
-
-  const handleSubmit = () => {
-    if (Object.keys(answered).length < allQuestions.length) {
-      alert('กรุณาตอบคำถามทั้งหมด');
-      return;
-    }
-    setShowResults(true);
-  };
-
-  const handleReset = () => {
-    setAnswered({});
-    setShowResults(false);
-    setExpandedWeek(null);
-  };
-
-  const calculateScore = () => {
-    let correct = 0;
-    allQuestions.forEach(q => {
-      if (answered[q.id] === q.correct) {
-        correct++;
-      }
-    });
-    return correct;
-  };
-
-  const score = calculateScore();
-  const percentage = Math.round((score / allQuestions.length) * 100);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h1 className="text-4xl font-bold text-center text-indigo-700 mb-2">
-            📚 Quiz from P'Fern
-          </h1>
-          <p className="text-center text-gray-600">
-            Deep Learning & NLP - Week 1 to 5
-          </p>
-          <p className="text-center text-sm text-gray-500 mt-2">
-            ทั้งหมด {allQuestions.length} ข้อ จากทั้ง 5 สัปดาห์
-          </p>
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto" id="app">
+        <!-- Loading State -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6 text-center">
+            <h1 class="text-4xl font-bold text-indigo-700 mb-2">📚 Quiz from P'Fern</h1>
+            <p class="text-gray-600">Deep Learning & NLP - Week 1 to 5</p>
+            <p class="text-sm text-gray-500 mt-2">กำลังโหลด...</p>
         </div>
-
-        {!showResults ? (
-          <>
-            {/* Quiz by Week */}
-            <div className="space-y-4 mb-6">
-              {quizzes.map((quiz) => (
-                <div key={quiz.week} className="bg-white rounded-lg shadow-lg overflow-hidden">
-                  <button
-                    onClick={() => setExpandedWeek(expandedWeek === quiz.week ? null : quiz.week)}
-                    className="w-full p-4 flex items-center justify-between bg-indigo-600 text-white hover:bg-indigo-700 transition"
-                  >
-                    <span className="text-lg font-bold">Week {quiz.week}</span>
-                    <div className="flex items-center gap-4">
-                      <span className="text-sm">
-                        {Object.values(answered).filter((ans, idx) => 
-                          idx < allQuestions.filter(q => q.id <= (quiz.week * 100)).length && 
-                          quiz.questions.some(q => q.id === allQuestions[idx]?.id)
-                        ).length || 0}/{quiz.questions.length}
-                      </span>
-                      {expandedWeek === quiz.week ? <ChevronUp /> : <ChevronDown />}
-                    </div>
-                  </button>
-
-                  {expandedWeek === quiz.week && (
-                    <div className="p-6 space-y-6">
-                      {quiz.questions.map((question, qIdx) => (
-                        <div key={question.id} className="border-l-4 border-indigo-600 pl-4 pb-4">
-                          <h3 className="font-bold text-lg mb-3 text-gray-800">
-                            {qIdx + 1 + (quiz.week - 1) * 15}. {question.text}
-                          </h3>
-                          <div className="space-y-2">
-                            {question.options.map((option, optIdx) => (
-                              <label
-                                key={optIdx}
-                                className={`flex items-center p-3 rounded-lg border-2 cursor-pointer transition ${
-                                  answered[question.id] === optIdx
-                                    ? 'border-indigo-600 bg-indigo-50'
-                                    : 'border-gray-200 bg-white hover:border-indigo-300'
-                                }`}
-                              >
-                                <input
-                                  type="radio"
-                                  name={`question-${question.id}`}
-                                  checked={answered[question.id] === optIdx}
-                                  onChange={() => handleAnswer(question.id, optIdx)}
-                                  className="w-4 h-4 text-indigo-600"
-                                />
-                                <span className="ml-3 text-gray-700">{option}</span>
-                              </label>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Submit Button */}
-            <button
-              onClick={handleSubmit}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-lg text-lg transition shadow-lg"
-            >
-              ✅ ตรวจสอบคำตอบ
-            </button>
-          </>
-        ) : (
-          // Results Page
-          <div className="space-y-6">
-            {/* Score Card */}
-            <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-              <h2 className="text-3xl font-bold text-indigo-700 mb-4">🏆 ผลการทดสอบ</h2>
-              <div className="text-6xl font-bold text-green-600 mb-2">{score}/{allQuestions.length}</div>
-              <div className="text-3xl font-bold text-indigo-700 mb-6">{percentage}%</div>
-              
-              <div className="mb-6 h-4 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-green-500 to-blue-600 transition-all duration-500"
-                  style={{ width: `${percentage}%` }}
-                />
-              </div>
-
-              <p className="text-xl text-gray-700 mb-4">
-                {percentage === 100
-                  ? '🎉 ยอดเยี่ยม! ตอบถูกทั้งหมด!'
-                  : percentage >= 80
-                  ? '👏 ดีมาก!'
-                  : percentage >= 60
-                  ? '💪 ดี'
-                  : '📖 ไปอ่านเพิ่มเติมค่ะ'}
-              </p>
-            </div>
-
-            {/* Detailed Results by Week */}
-            <div className="space-y-4">
-              {quizzes.map((quiz) => {
-                const weekQuestions = quiz.questions;
-                const weekAnswered = weekQuestions.filter(q => answered[q.id] === q.correct).length;
-
-                return (
-                  <div key={quiz.week} className="bg-white rounded-lg shadow-lg p-4">
-                    <div className="flex justify-between items-center">
-                      <span className="font-bold text-lg text-gray-800">Week {quiz.week}</span>
-                      <span className="text-lg font-bold text-indigo-700">
-                        {weekAnswered}/{weekQuestions.length}
-                      </span>
-                    </div>
-                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden mt-2">
-                      <div
-                        className="h-full bg-indigo-600 transition-all duration-500"
-                        style={{ width: `${(weekAnswered / weekQuestions.length) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Detailed Review */}
-            <div className="space-y-4">
-              <h3 className="text-2xl font-bold text-indigo-700">📋 รายละเอียดคำตอบ</h3>
-              {quizzes.map((quiz) => (
-                <div key={quiz.week} className="bg-white rounded-lg shadow-lg p-6">
-                  <h4 className="text-xl font-bold text-indigo-600 mb-4">Week {quiz.week}</h4>
-                  <div className="space-y-3">
-                    {quiz.questions.map((q, idx) => {
-                      const isCorrect = answered[q.id] === q.correct;
-                      return (
-                        <div
-                          key={q.id}
-                          className={`p-3 rounded-lg ${
-                            isCorrect
-                              ? 'bg-green-50 border-l-4 border-green-600'
-                              : 'bg-red-50 border-l-4 border-red-600'
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            {isCorrect ? (
-                              <CheckCircle className="text-green-600 mt-1 flex-shrink-0" />
-                            ) : (
-                              <XCircle className="text-red-600 mt-1 flex-shrink-0" />
-                            )}
-                            <div className="flex-1">
-                              <p className="font-semibold text-gray-800">
-                                {idx + 1}. {q.text}
-                              </p>
-                              <p className="text-sm mt-1">
-                                <span className="text-gray-600">คำตอบของคุณ: </span>
-                                <span className={isCorrect ? 'text-green-700 font-bold' : 'text-red-700 font-bold'}>
-                                  {q.options[answered[q.id]]}
-                                </span>
-                              </p>
-                              {!isCorrect && (
-                                <p className="text-sm">
-                                  <span className="text-gray-600">คำตอบที่ถูก: </span>
-                                  <span className="text-green-700 font-bold">{q.options[q.correct]}</span>
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Reset Button */}
-            <button
-              onClick={handleReset}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg text-lg transition shadow-lg flex items-center justify-center gap-2"
-            >
-              <RefreshCw size={20} /> ทำใหม่
-            </button>
-          </div>
-        )}
-      </div>
     </div>
-  );
-}
+
+    <script>
+        const quizzes = [
+            {
+                week: 1,
+                questions: [
+                    { id: 1, text: 'ข้อใดอธิบายความหมายของ Deep Learning ได้ถูกต้องที่สุด', options: ['อัลกอริทึมที่ใช้กฎ (Rule-based) ในการตัดสินใจ', 'การเรียนรู้ของเครื่องที่ใช้ Neural Network หลายชั้นเพื่อเรียนรู้คุณลักษณะของข้อมูล', 'การประมวลผลข้อมูลด้วยสถิติพื้นฐาน', 'การเขียนโปรแกรมแบบกำหนดเงื่อนไขล่วงหน้า'], correct: 1 },
+                    { id: 2, text: 'องค์ประกอบใด ไม่ใช่ ส่วนหลักของการฝึก Deep Learning Model', options: ['Input Data', 'Operating System', 'Loss Function', 'Optimizer'], correct: 1 },
+                    { id: 3, text: 'ข้อใดอธิบายความหมายของ Scalar ได้ถูกต้องที่สุด', options: ['ข้อมูลหลายค่าเรียงเป็นแถว', 'ข้อมูลที่มีทั้งขนาดและทิศทาง', 'ค่าตัวเลขเพียงค่าเดียว ไม่มีมิติ', 'ข้อมูลสองมิติแบบตาราง'], correct: 2 },
+                    { id: 4, text: 'โครงสร้างข้อมูลใดจัดเป็น Vector', options: ['ค่า loss = 0.25', 'ภาพขาวดำขนาด 28x28', '(0.2, 0.5, 0.8)', 'Batch ของภาพสี'], correct: 2 },
+                    { id: 5, text: 'Matrix มีลักษณะเด่นอย่างไร', options: ['มี 2 มิติ (แถว x คอลัมน์)', 'มีเพียงค่าเดียว', 'มี 1 มิติ', 'มีมากกว่า 3 มิติ'], correct: 0 },
+                    { id: 6, text: 'ข้อใดเรียงลำดับ มิติ (Rank) ได้ถูกต้องจากน้อยไปมาก', options: ['Vector → Scalar → Matrix + Tensor', 'Scalar → Vector → Matrix → Tensor', 'Matrix → Vector → Scalar → Tensor', 'Tensor → Matrix + Vector → Scalar'], correct: 1 },
+                    { id: 7, text: 'ข้อใดเป็นข้อดีหลักของการใช้ Google Colab', options: ['ต้องติดตั้ง TensorFlow เองทุกครั้ง', 'รองรับเฉพาะ CPU เท่านั้น', 'สามารถใช้งาน GPU/TPU ได้โดยไม่ต้องตั้งค่าเครื่องเอง', 'ใช้งานได้เฉพาะบน Linux'], correct: 2 },
+                    { id: 8, text: 'TensorFlow มีบทบาทหลักในระบบ Deep Learning อย่างไร', options: ['เป็นเครื่องมือสร้าง Dataset', 'เป็น Framework สำหรับคำนวณและฝึกโมเดลเชิงตัวเลข (Numerical Computation)', 'เป็นภาษาโปรแกรม', 'เป็นระบบจัดการไฟล์'], correct: 1 },
+                    { id: 9, text: 'Keras คืออะไรในบริบทของ TensorFlow', options: ['Library สำหรับสร้างกราฟ', 'High-level API สำหรับสร้างและฝึก Neural Network', 'ระบบจัดการ GPU', 'เครื่องมือแปลงข้อมูลเป็น CSV'], correct: 1 },
+                    { id: 10, text: 'คำสั่งใดใช้สำหรับสร้างโมเดลแบบ Sequential ใน Keras', options: ['tf.keras.Sequential()', 'tf.keras.build()', 'tf.keras.layers()', 'tf.keras.Model.compile()'], correct: 0 },
+                    { id: 11, text: 'ข้อใดต่อไปนี้ถูกต้อง', options: ['Keras เปรียบเสมือน หน้าบ้าน, TensorFlow เปรียบเสมือน หลังบ้าน', 'Keras เปรียบเสมือน หลังบ้าน, TensorFlow เปรียบเสมือน หน้าบ้าน'], correct: 0 },
+                ]
+            },
+            {
+                week: 2,
+                questions: [
+                    { id: 1, text: 'เหตุใดใน Binary Classification จึงใช้ sigmoid ใน output layer', options: ['เพราะ sigmoid ให้ค่ามากกว่า 1', 'เพราะ sigmoid เหมาะกับข้อมูลภาพ', 'เพราะ sigmoid แปลงค่าเป็นความน่าจะเป็นระหว่าง 0-1', 'เพราะ sigmoid ลด overfitting ได้ดีที่สุด'], correct: 2 },
+                    { id: 2, text: 'เหตุใด Multi-class Classification จึงใช้ softmax ใน output layer', options: ['เพื่อให้ค่า output เป็น 0 หรือ 1 เท่านั้น', 'เพื่อให้แต่ละคลาสเป็นอิสระต่อกัน', 'เพื่อให้โมเดลเรียนรู้เร็วขึ้นเสมอ', 'เพื่อให้ผลรวมของความน่าจะเป็นทุกคลาสเท่ากับ 1'], correct: 3 },
+                    { id: 3, text: 'เหตุใด Regression Model จึงไม่ใช้ activation function ใน output layer', options: ['เพราะ MSE ใช้ได้เฉพาะกับ linear layer', 'เพราะ activation function ทำให้โมเดลช้า', 'เพราะ regression ต้องการต่ำความน่าจะเป็น', 'เพราะต้องการค่าต่อเนื่องที่ไม่ถูกจำกัดช่วง'], correct: 3 },
+                    { id: 4, text: 'หากใช้ sigmoid ใน output layer ของ Regression จะเกิดผลใดมากที่สุด', options: ['ค่า prediction จะถูกจำกัดอยู่ระหว่าง 0-1', 'ค่า loss จะเป็นศูนย์', 'โมเดลจะ overfit ทันที', 'R2 score จะเท่ากับ 1'], correct: 0 },
+                    { id: 5, text: 'บทบาทหลักของ ReLU ใน hidden layer คือข้อใด', options: ['เพิ่ม non-linearity ให้โมเดล', 'ทำให้ output เป็น probability', 'ทำให้ข้อมูลมีค่าเฉลี่ยเป็นศูนย์', 'ลดจำนวนพารามิเตอร์ของโมเดล'], correct: 0 },
+                    { id: 6, text: 'บทบาทหลักของ Conv2D layer คือข้อใด', options: ['ลดขนาดภาพ', 'แปลงภาพเป็นเวกเตอร์ 1 มิติ', 'เพิ่มจำนวน channel โดยตรง', 'ดึงคุณลักษณะเชิงพื้นที่ (spatial features)'], correct: 3 },
+                    { id: 7, text: 'หน้าที่หลักของ MaxPooling2D คือข้อใด', options: ['เพิ่มจำนวนพารามิเตอร์', 'ทำหน้าที่เป็น activation function', 'รวม feature map หลายอันเข้าด้วยกัน', 'ลดขนาด spatial และลด noise'], correct: 3 },
+                    { id: 8, text: 'หน้าที่ของ Flatten ในโมเดล CNN คือข้อใด', options: ['ลดจำนวน channel ของ feature map', 'แปลง feature map หลายมิติเป็นเวกเตอร์ 1 มิติ', 'เพิ่ม spatial resolution ของภาพ', 'ทำหน้าที่เป็น activation function'], correct: 1 },
+                ]
+            },
+            {
+                week: 3,
+                questions: [
+                    { id: 1, text: 'จุดประสงค์หลักของ Transfer Learning คืออะไร', options: ['ลดจำนวน layer', 'ใช้โมเดลที่เรียนรู้มาก่อนมาช่วยงานใหม่', 'ทำให้โมเดลเล็กลง', 'เพิ่มจำนวนข้อมูล'], correct: 1 },
+                    { id: 2, text: 'โมเดล pretrained ส่วนใหญ่มักเทรนจาก dataset ใด', options: ['CIFAR-10', 'MNIST', 'ImageNet', 'COCO'], correct: 2 },
+                    { id: 3, text: 'ใน CNN ขั้นต้น ๆ มักเรียนรู้อะไร', options: ['Object class', 'Semantic meaning', 'Edge และ texture', 'Bounding box'], correct: 2 },
+                    { id: 4, text: 'การตั้งค่า include_top=False หมายถึง', options: ['ใช้ layer ทั้งหมด', 'ไม่ใช้ classifier เดิม', 'ลด input size', 'ลบ convolution layer'], correct: 1 },
+                    { id: 5, text: 'เหตุผลที่ต้อง Freeze base model ในช่วงแรกคือ', options: ['เร็วขึ้น', 'ป้องกันการเปลี่ยน feature ทั่วไป', 'ลดจำนวน neuron', 'เพื่อใช้ sigmoid'], correct: 1 },
+                    { id: 6, text: 'ข้อใดคือ Feature Extraction', options: ['เทรนทุก layer', 'Unfreeze layer ทั้งหมด', 'Freeze base model แล้วเทรน head', 'เปลี่ยน optimizer'], correct: 2 },
+                    { id: 7, text: 'Fine-Tuning หมายถึง', options: ['เทรนเฉพาะ Dense', 'เทรนบาง layer ของ base model', 'ใช้ dataset เล็ก', 'เพิ่ม batch size'], correct: 1 },
+                    { id: 8, text: 'จุดประสงค์ของ GlobalAveragePooling2D คืออะไร', options: ['เพิ่มจำนวน feature', 'แปลง feature map เป็น vector', 'เพิ่ม resolution', 'ลด learning rate'], correct: 1 },
+                    { id: 9, text: 'ข้อใดช่วยลด overfitting ใน head', options: ['เพิ่ม learning rate', 'เพิ่ม Dropout', 'ลด epoch เป็น 1', 'เพิ่ม batch size'], correct: 1 },
+                    { id: 10, text: 'สถานการณ์ใดเหมาะกับ Feature Extraction มากที่สุด', options: ['Dataset 1 ล้านภาพ', 'Dataset เล็ก และคล้าย ImageNet', 'Dataset ใหญ่มาก', 'ต้องการเทรนจากศูนย์'], correct: 1 },
+                    { id: 11, text: 'Negative Transfer คืออะไร', options: ['การเทรนช้า', 'การใช้ pretrained model แล้ว performance แย่ลง', 'การ overfitting', 'การใช้ GPU ไม่พอ'], correct: 1 },
+                    { id: 12, text: 'สาเหตุหลักของ Negative Transfer คือ', options: ['Batch size เล็ก', 'Learning rate สูง', 'ความแตกต่างของ domain ระหว่าง source กับ target', 'ใช้ optimizer ผิด'], correct: 2 },
+                    { id: 13, text: 'หากตั้ง base_model.trainable = False หมายถึงอะไร', options: ['โมเดลหยุดทำงาน', 'Layer ใน base model จะไม่ถูกอัปเดตระหว่าง training', 'Dense layer จะไม่เรียนรู้', 'ใช้ GPU ไม่ได้'], correct: 1 },
+                    { id: 14, text: 'การทำ Data Augmentation ควรทำในขั้นตอนไหน', options: ['ก่อนเข้า CNN', 'หลัง classifier', 'หลัง pooling', 'หลัง softmax'], correct: 0 },
+                    { id: 15, text: 'Fine-Tuning ต่างจาก Feature Extraction อย่างไร', options: ['ใช้ optimizer ต่างกัน', 'Feature Extraction ใช้ batch ใหญ่กว่า', 'Fine-Tuning ไม่ใช้ pretrained model', 'Fine-Tuning อัปเดตบาง layer ของ base model'], correct: 3 },
+                ]
+            },
+            {
+                week: 4,
+                questions: [
+                    { id: 1, text: 'กระบวนการแบ่งข้อความออกเป็นหน่วยย่อยๆ เช่น คำ หรือ ตัวอักษร เรียกว่า', options: ['Padding', 'Tokenization', 'Stopword Removal', 'Embedding'], correct: 1 },
+                    { id: 2, text: 'คำว่า "a", "an", "this" จะถูกจัดอยู่ในกลุ่มใดในการทำ NLP', options: ['Keywords', 'Tokens', 'Stopwords', 'N-grams'], correct: 2 },
+                    { id: 3, text: 'พี่คนสอนชื่ออะไร', options: ['เฟรนด์', 'เฟิร์ส', 'เฟิร์น', 'ฟิวส์'], correct: 2 },
+                    { id: 4, text: 'การกำหนด "truncating" และ "padding" มีความสำคัญที่สุดในขั้นตอนใดของ Process', options: ['Tuning Model', 'Model Training', 'Data Analysis', 'Data Preprocessing'], correct: 3 },
+                    { id: 5, text: 'เหตุใดเราจึงต้องทำ Padding กับข้อมูลข้อความก่อนส่งเข้าสู่โมเดล Deep Learning', options: ['เพื่อลบคำที่ไม่มีความหมายออก', 'เพื่อให้ข้อมูลทุก Input มีขนาดความยาว (Length) เท่ากัน', 'เพื่อเพิ่มความแม่นยำของโมเดล', 'เพื่อลดขนาดของเวกเตอร์'], correct: 1 },
+                    { id: 6, text: 'หากกำหนด maxlen=5 และ truncating=\'post\' ประโยคที่มี Token เป็น [1, 2, 3, 4, 5, 6, 7] จะถูกจัดการอย่างไร', options: ['[1, 2, 3, 4, 5, 0, 0]', '[1, 2, 3, 4, 5]', '[1, 2, 3]', '[3, 4, 5, 6, 7]'], correct: 1 },
+                    { id: 7, text: 'ถ้ากำหนด maxlen=4, padding=\'pre\', และประโยคเดิมคือ [10, 11] ผลลัพธ์ที่ได้จะเป็นข้อใด', options: ['[10, 11, 0, 0]', '[0, 0, 10, 11]', '[10, 11]', '[0, 10, 11, 0]'], correct: 1 },
+                    { id: 8, text: 'กำหนด Vocabulary ให้แปลงประโยค "I love NLP" เป็นตัวเลข', options: ['[1, 2, 3]', '[0, 1, 2]', '[3, 2, 1]', '[2, 1, 3]'], correct: 0 },
+                    { id: 9, text: 'ในการสร้างโมเดล NLP ข้อมูล 3D Tensor มักแสดงผลในรูปแบบใด', options: ['[Width, Height, Color]', '[Row, Column]', '[Batch, Sequence_length, Embedded_Size]', '[Total_Words]'], correct: 2 },
+                    { id: 10, text: 'ปัญหา "Vanishing Gradient" ใน RNN แบบตั้งเดิมส่งผลเสียอย่างไร', options: ['ทำให้โมเดลจำลำดับข้อมูลที่อยู่ไกลกันมากๆ ไม่ได้ (Long-term dependency)', 'ทำให้โมเดลทำงานเร็วเกินไป', 'ทำให้โมเดลทำ Tokenization ผิดพลาด', 'ทำให้โมเดลใช้หน่วยความจำมากเกินไป'], correct: 0 },
+                    { id: 11, text: 'LSTM แตกต่างจาก RNN ทั่วไปอย่างไรในเชิงโครงสร้าง', options: ['LSTM ไม่มี hidden state', 'LSTM ใช้เฉพาะกับข้อมูลรูปภาพเท่านั้น', 'LSTM ไม่สามารถทำ Backpropagation ได้', 'LSTM มี Gates เพื่อควบคุมการไหลของข้อมูล'], correct: 3 },
+                    { id: 12, text: 'งานประเภท Sentiment Analysis วิเคราะห์อารมณ์จากข้อความ จัดอยู่ในหัวข้อใด', options: ['Machine Translation', 'Text Classification', 'Object Detection', 'Speech Recognition'], correct: 1 },
+                    { id: 13, text: 'ในกรณีที่ต้องการให้โมเดลเข้าใจความหมายของคำจากทั้ง "คำก่อนหน้า" และ "คำที่ตามมา" สถาปัตยกรรมใดเหมาะสมที่สุด', options: ['Simple RNN', 'GRU', 'Bidirectional LSTM', 'ไม่มีข้อใดถูก'], correct: 2 },
+                    { id: 14, text: 'ในระบบแปลภาษาแบบ Encoder-Decoder หน้าที่ของ "Encoder" เปรียบได้กับ', options: ['คนที่เขียนคำแปล', 'คนที่อ่านและสรุปใจความ', 'คนที่ตรวจค่าผิด', 'คนที่จัดหน้ากระดาษ'], correct: 1 },
+                    { id: 15, text: 'ประโยชน์ของ "Stacked LSTM" คืออะไร', options: ['ทำงานเร็วและใช้หน่วยความจำน้อย', 'เรียนรู้รูปแบบซับซ้อนและ Hierarchical', 'ลดจำนวนพารามิเตอร์', 'เปลี่ยน 3D Tensor เป็น 1D Tensor'], correct: 1 },
+                ]
+            },
+            {
+                week: 5,
+                questions: [
+                    { id: 1, text: 'กลไก Self-Attention ทำหน้าที่อะไร', options: ['สลับตำแหน่งคำในประโยค', 'คำนวณความสัมพันธ์ระหว่างคำในประโยคเดียวกัน', 'ย่อประโยคยาวให้เหลือสั้นลง', 'แปลงตัวอักษรให้เป็นตัวเลข'], correct: 1 },
+                    { id: 2, text: 'ทำไม Transformer ต้องมี Positional Encoding', options: ['เพื่อให้โมเดลรู้ลำดับก่อนหลังของคำ', 'เพื่อเพิ่มความเร็วในการเทรน', 'เพื่อลดจำนวนคำศัพท์', 'เพื่อแยกแยะภาษา'], correct: 0 },
+                    { id: 3, text: 'โมเดลตระกูล GPT ใช้โครงสร้างแบบใด', options: ['Encoder-only', 'Decoder-only', 'Encoder-Decoder', 'RNN-based'], correct: 1 },
+                    { id: 4, text: 'Tokenization คือกระบวนการอะไร', options: ['การแปลภาษาอัตโนมัติ', 'การแยกข้อความย่อยและแปลงเป็นตัวเลข', 'การเพิ่มรหัสแบบ Public Key', 'การลบคำออกจากประโยค'], correct: 1 },
+                    { id: 5, text: 'โมเดล BERT เหมาะกับงานลักษณะใด', options: ['การเขียนนิยายหรือบทความ', 'การวิเคราะห์อารมณ์หรือจำแนกข้อความ', 'การสร้างแชทบอท', 'การพยากรณ์ราคาหุ้น'], correct: 1 },
+                    { id: 6, text: 'คำว่า Pre-trained ใน LLM หมายถึง', options: ['โมเดลที่เพิ่งเริ่มสร้างใหม่', 'โมเดลที่ฝึกฝนกับข้อมูลขนาดใหญ่มาแล้ว', 'โมเดลที่ใช้งานกับงานสเกลใหญ่', 'โมเดลที่ทำงานได้โดยไม่ต้องใช้ GPU'], correct: 1 },
+                    { id: 7, text: 'โครงสร้าง Encoder-Decoder นิยมใช้ในงานใด', options: ['การจำแนกรูปภาพ', 'การแปลภาษา', 'การกรองอีเมลขยะ', 'การเก็บข้อมูล'], correct: 1 },
+                    { id: 8, text: 'ค่า Query (Q) ใน Attention เปรียบได้กับ', options: ['ค่ำคืนหาที่ป้อนเข้า', 'หัวข้อข้อมูล', 'เนื้อหาที่ได้รับกลับ', 'ลำดับหน้าหนังสือ'], correct: 0 },
+                    { id: 9, text: 'Hugging Face Library มีประโยชน์ดี', options: ['แต่งรูปภาพด้วย AI', 'ดึงโมเดล AI มาใช้ง่ายขึ้น', 'ทำ Backend', 'ส่งอีเมล'], correct: 1 },
+                    { id: 10, text: 'เลเยอร์ Feed-Forward ใน Transformer ทำหน้าที่', options: ['จัดลำดับคำ', 'ประมวลผลข้อมูลต่อจาก Attention', 'เข้ารหัสข้อมูล', 'คอนโวลชันข้อมูล'], correct: 1 },
+                    { id: 11, text: 'Multi-Head Attention มีข้อดีอย่างไร', options: ['ทำวแงนได้หลาย User', 'มองบริบทสหลายแง่มุมพร้อมกัน', 'แปลประเภทหลายภาษา', 'ประหยัด memory'], correct: 1 },
+                    { id: 12, text: 'Masking ใน Decoder เพื่อ', options: ['ป้องกันมองเห็นคำในอนาคต', 'ประมวลผลรูปภาพเร็ว', 'เพิ่มพารามิเตอร์', 'ป้องกันการเจาะ'], correct: 0 },
+                    { id: 13, text: 'LLM มีพารามิเตอร์ประมาณ', options: ['1M-175B', '500K-50M', '10M-1000M', '2M-200M'], correct: 0 },
+                    { id: 14, text: 'Beam Search เลือกประโยคจากอะไร', options: ['ความน่าจะเป็นสะสมสูงสุด', 'ความถี่ของคำ', 'generate ก่อน', 'token ซ้ำน้อย'], correct: 0 },
+                    { id: 15, text: 'โมเดลภาษาจาก Google คือ', options: ['GPT-4', 'Llama', 'Claude', 'Gemini'], correct: 3 },
+                ]
+            }
+        ];
+
+        const allQuestions = quizzes.flatMap(q => q.questions);
+        let answered = {};
+        let currentState = 'quiz';
+        let expandedWeek = null;
+
+        function render() {
+            const app = document.getElementById('app');
+            
+            if (currentState === 'quiz') {
+                renderQuiz();
+            } else if (currentState === 'results') {
+                renderResults();
+            }
+        }
+
+        function renderQuiz() {
+            const app = document.getElementById('app');
+            const progress = Object.keys(answered).length;
+            
+            app.innerHTML = `
+                <div class="fade-in">
+                    <!-- Header -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                        <h1 class="text-4xl font-bold text-center text-indigo-700 mb-2">📚 Quiz from P'Fern</h1>
+                        <p class="text-center text-gray-600">Deep Learning & NLP - Week 1 to 5</p>
+                        <p class="text-center text-sm text-gray-500 mt-2">ทั้งหมด ${allQuestions.length} ข้อ | ตอบแล้ว ${progress}/${allQuestions.length}</p>
+                        <div class="w-full bg-gray-200 rounded-full h-3 mt-4 overflow-hidden">
+                            <div class="bg-indigo-600 h-full transition-all" style="width: ${(progress/allQuestions.length)*100}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Quiz by Week -->
+                    <div class="space-y-4 mb-6">
+                        ${quizzes.map(quiz => renderWeek(quiz)).join('')}
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button onclick="submitQuiz()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-lg text-lg transition shadow-lg" ${progress < allQuestions.length ? 'disabled' : ''} style="${progress < allQuestions.length ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
+                        ✅ ตรวจสอบคำตอบ (${progress}/${allQuestions.length})
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderWeek(quiz) {
+            const weekQuestions = quiz.questions;
+            const weekAnswered = weekQuestions.filter(q => answered[q.id]).length;
+            const isExpanded = expandedWeek === quiz.week;
+            
+            return `
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <button onclick="toggleWeek(${quiz.week})" class="w-full p-4 flex items-center justify-between bg-indigo-600 text-white hover:bg-indigo-700 transition">
+                        <span class="text-lg font-bold">Week ${quiz.week}</span>
+                        <div class="flex items-center gap-4">
+                            <span class="text-sm">${weekAnswered}/${weekQuestions.length}</span>
+                            <span>${isExpanded ? '▼' : '▶'}</span>
+                        </div>
+                    </button>
+
+                    ${isExpanded ? `
+                        <div class="p-6 space-y-6">
+                            ${weekQuestions.map((q, idx) => `
+                                <div class="border-l-4 border-indigo-600 pl-4">
+                                    <h3 class="font-bold text-lg mb-3 text-gray-800">${(idx + 1) + (quiz.week - 1) * 15}. ${q.text}</h3>
+                                    <div class="space-y-2">
+                                        ${q.options.map((opt, optIdx) => `
+                                            <label class="flex items-center p-3 rounded-lg border-2 cursor-pointer transition ${answered[q.id] === optIdx ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 bg-white hover:border-indigo-300'}">
+                                                <input type="radio" name="q${q.id}" ${answered[q.id] === optIdx ? 'checked' : ''} onchange="answerQuestion(${q.id}, ${optIdx})" class="w-4 h-4">
+                                                <span class="ml-3 text-gray-700">${opt}</span>
+                                            </label>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function renderResults() {
+            const correct = allQuestions.filter(q => answered[q.id] === q.correct).length;
+            const percentage = Math.round((correct / allQuestions.length) * 100);
+            const app = document.getElementById('app');
+            
+            app.innerHTML = `
+                <div class="fade-in space-y-6">
+                    <!-- Score Card -->
+                    <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+                        <h2 class="text-3xl font-bold text-indigo-700 mb-4">🏆 ผลการทดสอบ</h2>
+                        <div class="text-6xl font-bold text-green-600 mb-2">${correct}/${allQuestions.length}</div>
+                        <div class="text-3xl font-bold text-indigo-700 mb-6">${percentage}%</div>
+                        
+                        <div class="mb-6 h-4 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-green-500 to-blue-600 transition-all" style="width: ${percentage}%"></div>
+                        </div>
+
+                        <p class="text-xl text-gray-700">
+                            ${percentage === 100 ? '🎉 ยอดเยี่ยม! ตอบถูกทั้งหมด!' : 
+                              percentage >= 80 ? '👏 ดีมาก!' :
+                              percentage >= 60 ? '💪 ดี' :
+                              '📖 ไปอ่านเพิ่มเติมค่ะ'}
+                        </p>
+                    </div>
+
+                    <!-- Detailed Results -->
+                    <div class="space-y-4">
+                        <h3 class="text-2xl font-bold text-indigo-700">📋 ผลการตอบโดยละเอียด</h3>
+                        ${quizzes.map((quiz, wIdx) => {
+                            const weekQuestions = quiz.questions;
+                            const weekCorrect = weekQuestions.filter(q => answered[q.id] === q.correct).length;
+                            return `
+                                <div class="bg-white rounded-lg shadow-lg p-6">
+                                    <h4 class="text-xl font-bold text-indigo-600 mb-4">Week ${quiz.week}: ${weekCorrect}/${weekQuestions.length}</h4>
+                                    <div class="space-y-3">
+                                        ${weekQuestions.map((q, idx) => {
+                                            const isCorrect = answered[q.id] === q.correct;
+                                            return `
+                                                <div class="p-3 rounded-lg ${isCorrect ? 'bg-green-50 border-l-4 border-green-600' : 'bg-red-50 border-l-4 border-red-600'}">
+                                                    <p class="font-semibold text-gray-800">${idx + 1}. ${q.text}</p>
+                                                    <p class="text-sm mt-1">
+                                                        <span class="text-gray-600">คำตอบของคุณ: </span>
+                                                        <span class="${isCorrect ? 'text-green-700 font-bold' : 'text-red-700 font-bold'}">${q.options[answered[q.id]]}</span>
+                                                    </p>
+                                                    ${!isCorrect ? `
+                                                        <p class="text-sm">
+                                                            <span class="text-gray-600">คำตอบที่ถูก: </span>
+                                                            <span class="text-green-700 font-bold">${q.options[q.correct]}</span>
+                                                        </p>
+                                                    ` : ''}
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- Reset Button -->
+                    <button onclick="resetQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg text-lg transition shadow-lg">
+                        🔄 ทำใหม่
+                    </button>
+                </div>
+            `;
+        }
+
+        function answerQuestion(id, optIdx) {
+            answered[id] = optIdx;
+            render();
+        }
+
+        function toggleWeek(week) {
+            expandedWeek = expandedWeek === week ? null : week;
+            render();
+        }
+
+        function submitQuiz() {
+            if (Object.keys(answered).length < allQuestions.length) {
+                alert('กรุณาตอบคำถามทั้งหมด');
+                return;
+            }
+            currentState = 'results';
+            render();
+        }
+
+        function resetQuiz() {
+            answered = {};
+            currentState = 'quiz';
+            expandedWeek = null;
+            render();
+        }
+
+        render();
+    </script>
+</body>
+</html>
