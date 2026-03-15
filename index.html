@@ -6,7 +6,8 @@
     <title>Quiz from P'Fern - Deep Learning & NLP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { scrolling-behavior: smooth; }
+        /* แก้ไขคำผิดจาก scrolling-behavior เป็น scroll-behavior */
+        * { scroll-behavior: smooth; }
         .fade-in { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -40,7 +41,7 @@
                 questions: [
                     { id: 1, text: 'เหตุใดใน Binary Classification จึงใช้ sigmoid ใน output layer', options: ['เพราะ sigmoid ให้ค่ามากกว่า 1', 'เพราะ sigmoid เหมาะกับข้อมูลภาพ', 'เพราะ sigmoid แปลงค่าเป็นความน่าจะเป็นระหว่าง 0-1', 'เพราะ sigmoid ลด overfitting ได้ดีที่สุด'], correct: 2 },
                     { id: 2, text: 'เหตุใด Multi-class Classification จึงใช้ softmax ใน output layer', options: ['เพื่อให้ค่า output เป็น 0 หรือ 1 เท่านั้น', 'เพื่อให้แต่ละคลาสเป็นอิสระต่อกัน', 'เพื่อให้โมเดลเรียนรู้เร็วขึ้นเสมอ', 'เพื่อให้ผลรวมของความน่าจะเป็นทุกคลาสเท่ากับ 1'], correct: 3 },
-                    { id: 3, text: 'เหตุใด Regression Model จึงไม่ใช้ activation function ใน output layer', options: ['เพราะ MSE ใช้ได้เฉพาะกับ linear layer', 'เพราะ activation function ทำให้โมเดลช้า', 'เพราะ regression ต้องการต่ำความน่าจะเป็น', 'เพราะต้องการค่าต่อเนื่องที่ไม่ถูกจำกัดช่วง'], correct: 3 },
+                    { id: 3, text: 'เหตุใด Regression Model จึงไม่ใช้ activation functionใน output layer', options: ['เพราะ MSE ใช้ได้เฉพาะกับ linear layer', 'เพราะ activation function ทำให้โมเดลช้า', 'เพราะ regression ต้องการต่ำความน่าจะเป็น', 'เพราะต้องการค่าต่อเนื่องที่ไม่ถูกจำกัดช่วง'], correct: 3 },
                     { id: 4, text: 'หากใช้ sigmoid ใน output layer ของ Regression จะเกิดผลใดมากที่สุด', options: ['ค่า prediction จะถูกจำกัดอยู่ระหว่าง 0-1', 'ค่า loss จะเป็นศูนย์', 'โมเดลจะ overfit ทันที', 'R2 score จะเท่ากับ 1'], correct: 0 },
                     { id: 5, text: 'บทบาทหลักของ ReLU ใน hidden layer คือ', options: ['เพิ่ม non-linearity ให้โมเดล', 'ทำให้ output เป็น probability', 'ทำให้ข้อมูลมีค่าเฉลี่ยเป็นศูนย์', 'ลดจำนวนพารามิเตอร์ของโมเดล'], correct: 0 },
                     { id: 6, text: 'บทบาทหลักของ Conv2D layer คือ', options: ['ลดขนาดภาพ', 'แปลงภาพเป็นเวกเตอร์ 1 มิติ', 'เพิ่มจำนวน channel โดยตรง', 'ดึงคุณลักษณะเชิงพื้นที่ (spatial features)'], correct: 3 },
@@ -74,14 +75,15 @@
                     { id: 1, text: 'กระบวนการแบ่งข้อความออกเป็นหน่วยย่อยๆ เช่น คำ หรือ ตัวอักษร เรียกว่า', options: ['Padding', 'Tokenization', 'Stopword Removal', 'Embedding'], correct: 1 },
                     { id: 2, text: 'คำว่า "a", "an", "this" จะถูกจัดอยู่ในกลุ่มใดในการทำ NLP', options: ['Keywords', 'Tokens', 'Stopwords', 'N-grams'], correct: 2 },
                     { id: 3, text: 'พี่คนสอนชื่ออะไร', options: ['เฟรนด์', 'เฟิร์ส', 'เฟิร์น', 'ฟิวส์'], correct: 2 },
-                    { id: 4, text: 'การกำหนด 'truncating' และ 'padding' มีความสำคัญที่สุดในขั้นตอนใดของ Process', options: ['Tuning Model', 'Model Training', 'Data Analysis', 'Data Preprocessing'], correct: 3 },
+                    /* แก้ไข Syntax Error โดยใช้ Backticks (`) ครอบข้อความที่มีเครื่องหมายคำพูดซ้อน */
+                    { id: 4, text: `การกำหนด "truncating" และ "padding" มีความสำคัญที่สุดในขั้นตอนใดของ Process`, options: ['Tuning Model', 'Model Training', 'Data Analysis', 'Data Preprocessing'], correct: 3 },
                     { id: 5, text: 'เหตุใดเราจึงต้องทำ Padding กับข้อมูลข้อความก่อนส่งเข้าสู่โมเดล Deep Learning', options: ['เพื่อลบคำที่ไม่มีความหมาย', 'เพื่อให้ข้อมูลทุก Input มีความยาวเท่ากัน', 'เพื่อเพิ่มความแม่นยำ', 'เพื่อลดขนาดของเวกเตอร์'], correct: 1 },
-                    { id: 6, text: 'หากกำหนด maxlen=5 และ truncating='post' ประโยคที่มี Token เป็น [1, 2, 3, 4, 5, 6, 7] จะถูกจัดการอย่างไร', options: ['[1, 2, 3, 4, 5, 0, 0]', '[1, 2, 3, 4, 5]', '[1, 2, 3]', '[3, 4, 5, 6, 7]'], correct: 1 },
-                    { id: 7, text: 'ถ้ากำหนด maxlen=4, padding='pre', และประโยคเดิมคือ[10, 11] ผลลัพธ์ที่ได้จะเป็นข้อใด? (สมมติให้ <PAD> = 0)', options: ['[10, 11, 0, 0]', '[0, 0, 10, 11]', '[10, 11]', '[0, 10, 11, 0]'], correct: 1 },
-                    { id: 8, text: 'กำหนด Vocabulary: (<PAD>': 0, : 1, 1, 'love': 'NLP': 3) หากต้องการแปลงประโยค ' love NLP' เป็นตัวเลข จะได้ผลลัพธ์ข้อใด?', options: ['[1, 2, 3]', '[0, 1, 2]', '[3, 2, 1]', '[2, 1, 3]'], correct: 0 },
+                    { id: 6, text: `หากกำหนด maxlen=5 และ truncating="post" ประโยคที่มี Token เป็น [1, 2, 3, 4, 5, 6, 7] จะถูกจัดการอย่างไร`, options: ['[1, 2, 3, 4, 5, 0, 0]', '[1, 2, 3, 4, 5]', '[1, 2, 3]', '[3, 4, 5, 6, 7]'], correct: 1 },
+                    { id: 7, text: `ถ้ากำหนด maxlen=4, padding="pre", และประโยคเดิมคือ [10, 11] ผลลัพธ์ที่ได้จะเป็นข้อใด? (สมมติให้ <PAD> = 0)`, options: ['[10, 11, 0, 0]', '[0, 0, 10, 11]', '[10, 11]', '[0, 10, 11, 0]'], correct: 1 },
+                    { id: 8, text: `กำหนด Vocabulary: {"<PAD>": 0, "love": 1, "NLP": 2} หากต้องการแปลงประโยค "love NLP" เป็นตัวเลข จะได้ผลลัพธ์ข้อใด?`, options: ['[1, 2]', '[0, 1, 2]', '[3, 2, 1]', '[2, 1, 3]'], correct: 0 },
                     { id: 9, text: 'ในการสร้างโมเดล NLP ข้อมูล 3D Tensor มักแสดงผลในรูปแบบใด?', options: ['[Width, Height, Color]', '[Row, Column]', '[Batch, Sequence_length, Embedded_Size]', '[Total_Words]'], correct: 2 },
                     { id: 10, text: 'ปัญหา "Vanishing Gradient" ใน RNN แบบดั้งเดิมส่งผลเสียอย่างไร?', options: ['ไม่จำลำดับข้อมูลที่ไกลกัน', 'ทำให้เร็วเกินไป', 'ทำให้ Tokenization ผิด', 'ใช้หน่วยความจำมาก'], correct: 0 },
-                    { id: 11, text: 'LSTM แตกต่างจาก RNN ทั่วไปอย่างไรในเชิงโครงสร้าง', options: ['ไม่มี hidden state', 'ใช้เฉพาะรูปภาพ', 'ไมฺ่ทำ Backpropagation', 'มี Gates ควบคุมการไหล'], correct: 3 },
+                    { id: 11, text: 'LSTM แตกต่างจาก RNN ทั่วไปอย่างไรในเชิงโครงสร้าง', options: ['ไม่มี hidden state', 'ใช้เฉพาะรูปภาพ', 'ไมฺ่ทำ Backpropagation', 'มี Gates ควบคุมการไหล'], correct: 3 },
                     { id: 12, text: 'งานประเภท Sentiment Analysis วิเคราะห์อารมณ์จากข้อความ จัดอยู่ในหัวข้อใด?', options: ['Machine Translation', 'Text Classification', 'Object Detection', 'Speech Recognition'], correct: 1 },
                     { id: 13, text: 'ในกรณีที่ต้องการให้โมเดลเข้าใจความหมายของคำจากทั้ง "คำก่อนหน้า" และ "คำที่ตามมา" (เช่น การเข้าใจบริบทของคำกลางประโยค) สถาปัตยกรรมใดเหมาะสมที่สุด?', options: ['Simple RNN', 'GRU', 'Bidirectional LSTM', 'ไม่มีถูก'], correct: 2 },
                     { id: 14, text: 'ในระบบแปลภาษาแบบ Encoder-Decoder หน้าที่ของ "Encoder" เปรียบได้กับข้อใดมากที่สุด?', options: ['คนเขียนแปล', 'คนอ่านและสรุปใจความ', 'คนตรวจค่าผิด', 'คนจัดหน้า'], correct: 1 },
@@ -381,7 +383,7 @@
             renderSummary(app);
         }
 
-        render();
+        window.onload = render; // รอให้หน้าเว็บโหลดเสร็จก่อนค่อยรัน JS
     </script>
 </body>
 </html>
